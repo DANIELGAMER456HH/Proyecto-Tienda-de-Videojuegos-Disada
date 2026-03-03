@@ -1,0 +1,26 @@
+import 'package:flutter/material.dart'; // Importa la librería de diseño de Google
+import 'login_page.dart';
+import 'form_page.dart';
+import 'summary_page.dart';
+
+void main() => runApp(VideojuegosDisada()); // Punto de inicio de la App
+
+class VideojuegosDisada extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false, // Quita la etiqueta "Debug" de la esquina
+      title: 'Videojuegos Disada',
+      theme: ThemeData(
+        primarySwatch: Colors.deepPurple, // Color morado como el de sus capturas
+        scaffoldBackgroundColor: Color(0xFFF5F5F5), // Color de fondo gris claro
+      ),
+      initialRoute: '/', // Define que la primera pantalla es el Login
+      routes: {
+        '/': (context) => LoginPage(),       // Ruta para el Login
+        '/form': (context) => FormPage(),    // Ruta para el Formulario
+        '/summary': (context) => SummaryPage(), // Ruta para el Resumen
+      },
+    );
+  }
+}

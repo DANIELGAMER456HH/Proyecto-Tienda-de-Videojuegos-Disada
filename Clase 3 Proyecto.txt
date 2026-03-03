@@ -1,0 +1,47 @@
+import 'package:flutter/material.dart';
+
+class FormPage extends StatelessWidget {
+  // Definimos los controladores como static para acceder a ellos desde SummaryPage
+  static TextEditingController nombre = TextEditingController();
+  static TextEditingController juego = TextEditingController();
+  static TextEditingController plataforma = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("Formulario de Registro - Disada")),
+      body: Padding(
+        padding: EdgeInsets.all(20),
+        child: Column(
+          children: [
+            // Llamamos a nuestra función personalizada para crear inputs rápido
+            _buildInput("Nombre del Jugador", Icons.person, nombre),
+            _buildInput("Videojuego Favorito", Icons.videogame_asset, juego),
+            _buildInput("Plataforma (Xbox/PS5/PC)", Icons.computer, plataforma),
+            SizedBox(height: 40),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.purple.shade50),
+              onPressed: () => Navigator.pushNamed(context, '/summary'), // Va al resumen
+              child: Text("GENERAR RESUMEN", style: TextStyle(color: Colors.deepPurple)),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Función para no repetir código de diseño en cada campo de texto
+  Widget _buildInput(String label, IconData icon, TextEditingController ctrl) {
+    return Container(
+      margin: EdgeInsets.only(bottom: 15),
+      child: TextField(
+        controller: ctrl,
+        decoration: InputDecoration(
+          prefixIcon: Icon(icon),
+          labelText: label,
+          border: OutlineInputBorder() // El recuadro del input
+        ),
+      ),
+    );
+  }
+}

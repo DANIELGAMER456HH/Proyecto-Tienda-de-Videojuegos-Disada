@@ -1,0 +1,55 @@
+import 'package:flutter/material.dart';
+import 'form_page.dart'; // Importamos para leer los datos del formulario
+
+class SummaryPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("Resumen de Datos")),
+      body: Center(
+        child: Container(
+          width: 600,
+          margin: EdgeInsets.all(20),
+          padding: EdgeInsets.all(30),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10)] // Sombra suave
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.assignment_turned_in, color: Colors.blue, size: 50), // Icono de check
+              Text("DATOS REGISTRADOS", style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 2)),
+              Divider(), // Línea divisoria
+              // Mostramos lo que se escribió en los controladores de la pantalla anterior
+              _datoRow("Nombre:", FormPage.nombre.text),
+              _datoRow("Videojuego:", FormPage.juego.text),
+              _datoRow("Plataforma:", FormPage.plataforma.text),
+              SizedBox(height: 30),
+              TextButton.icon(
+                icon: Icon(Icons.edit, size: 18),
+                label: Text("Modificar Datos de Videojuegos"),
+                onPressed: () => Navigator.pop(context), // Regresa a la pantalla anterior
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Widget auxiliar para alinear la etiqueta a la izquierda y el valor a la derecha
+  Widget _datoRow(String label, String valor) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label, style: TextStyle(color: Colors.grey[700])),
+          Text(valor, style: TextStyle(fontWeight: FontWeight.bold))
+        ],
+      ),
+    );
+  }
+}
