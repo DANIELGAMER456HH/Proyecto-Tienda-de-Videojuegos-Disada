@@ -1,0 +1,24 @@
+class VideojuegoApi {
+  // 1. Propiedades que guardarán los datos específicos que necesitamos de la API
+  final String title;
+  final String genre;
+  final String platform;
+
+  // 2. Constructor: Exige que estos tres datos sean proporcionados siempre que se cree un nuevo objeto VideojuegoApi
+  VideojuegoApi({
+    required this.title,
+    required this.genre,
+    required this.platform,
+  });
+
+  // 3. Factory method (Método de fábrica): Es como un "traductor". 
+  // Toma el formato JSON que llega de internet (que Dart ve como un Map o Diccionario)
+  // y lo convierte en un objeto de tipo VideojuegoApi que nuestra app puede manejar fácilmente.
+  factory VideojuegoApi.fromJson(Map<String, dynamic> json) {
+    return VideojuegoApi(
+      title: json['title'],       // Extrae el valor de la etiqueta 'title' del JSON
+      genre: json['genre'],       // Extrae el valor de la etiqueta 'genre' del JSON
+      platform: json['platform'], // Extrae el valor de la etiqueta 'platform' del JSON
+    );
+  }
+}

@@ -1,0 +1,81 @@
+import 'package:flutter/material.dart';
+// Nota: Asegúrate de importar tus archivos de ApiService y VideojuegoApi aquí arriba
+
+// Usamos StatefulWidget en lugar de StatelessWidget porque esta pantalla va a cambiar 
+// de estado (de "Cargando..." a "Mostrar Lista") una vez que lleguen los datos.
+class ListaJuegosPage extends StatefulWidget {
+  @override
+  _ListaJuegosPageState createState() => _ListaJuegosPageState();
+}
+
+class _ListaJuegosPageState extends State<ListaJuegosPage> {
+  // Variable que va a "sostener" la promesa de que los datos llegarán en el futuro
+  late Future<List<VideojuegoApi>> futureJuegos;
+
+  @override
+  void initState() {
+    super.initState();
+    // initState se ejecuta una sola vez cuando la pantalla se abre.
+    // Aquí le decimos al servicio: "¡Ve a buscar los juegos ahora!"
+    futureJuegos = ApiService().obtenerJuegos();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Catálogo de Juegos Gratuitos')),
+      
+      // FutureBuilder es el widget mágico que "escucha" a futureJuegos y reacciona a sus cambios
+      body: FutureBuilder<List<VideojuegoApi>>(
+        future: futureJuegos,
+        builder: (context, snapshot) {
+          
+          // CASO 1: Los datos todavía se están descargando de internet
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator()); // Muestra un circulito dando vueltas
+          } 
+          // CASO 2: Hubo un problema (no hay internet, servidor caído, etc.)
+          else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}')); // Muestra el texto del error
+          } 
+          // CASO 3: La petición terminó con éxito, pero la API nos mandó una lista vacía
+          else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return Center(child: Text('No hay juegos disponibles'));
+          }
+
+          // CASO 4: ¡Éxito total! Ya tenemos los datos listos para mostrarse
+          // Creamos una lista scrolleable que se construye elemento por elemento
+          return ListView.builder(
+            itemCount: snapshot.data!.length, // Define cuántas tarjetas se van a crear (basado en el tamaño de la lista obtenida)
+            itemBuilder: (context, index) {
+              
+              final juego = snapshot.data![index]; // Extraemos el juego individual de la posición actual (index)
+              
+              return Card( // Widget 'Card' dibuja un rectángulo blanco tipo tarjeta
+                margin: EdgeInsets.symmetric(horizontal: 15, vertical: 10), // Separa la tarjeta de los bordes y de otras tarjetas
+                elevation: 4, // Le da una pequeña sombra para que resalte
+                child: ListTile(
+                  // 'leading' es la parte izquierda del ListTile. Ahí ponemos el ícono.
+                  leading: Icon(Icons.videogame_asset, color: Colors.deepPurple, size: 40),
+                  
+                  // 'title' es el texto principal (El nombre del juego)
+                  title: Text(juego.title, style: TextStyle(fontWeight: FontWeight.bold)),
+                  
+                  // 'subtitle' es el texto secundario. Usamos un Column para poner dos textos uno debajo del otro
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start, // Alinea los textos a la izquierda
+                    children: [
+                      SizedBox(height: 5), // Da un pequeño espacio vertical entre el título y el subtítulo
+                      Text('Género: ${juego.genre}'), // Mostramos el género
+                      Text('Plataforma: ${juego.platform}'), // Mostramos la plataforma
+                    ],
+                  ),
+                ),
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+}

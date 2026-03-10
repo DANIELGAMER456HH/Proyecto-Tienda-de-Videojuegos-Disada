@@ -1,0 +1,33 @@
+import 'dart:convert'; // Importante: Nos permite usar json.decode() para interpretar el texto JSON
+import 'package:http/http.dart' as http; // Paquete necesario para hacer peticiones web
+
+class ApiService {
+  // Función asíncrona (async) porque va a tardar un tiempo en ir a internet y volver.
+  // Devuelve un 'Future' que eventualmente contendrá una Lista de nuestros objetos VideojuegoApi.
+  Future<List<VideojuegoApi>> obtenerJuegos() async {
+    
+    // 1. Hacemos la petición GET a la URL exacta de la API
+    final response = await http.get(
+      Uri.parse('https://www.freetogame.com/api/games')
+    );
+
+    // 2. Verificamos el código de estado HTTP. 200 significa "Todo salió perfecto (OK)"
+    if (response.statusCode == 200) {
+      
+      // 3. Convertimos el cuerpo de la respuesta (texto puro) en una lista dinámica manejable
+      List jsonResponse = json.decode(response.body);
+
+      // 4. Recorremos esa lista (.map). Por cada 'juego' en formato JSON que encontremos, 
+      // usamos nuestro "traductor" (VideojuegoApi.fromJson) para convertirlo en un objeto.
+      // Finalmente, volvemos a empaquetar todo como una Lista real de Dart (.toList()).
+      return jsonResponse
+          .map((juego) => VideojuegoApi.fromJson(juego))
+          .toList();
+          
+    } else {
+      // 5. Si el servidor responde con un error (ej. 404 No encontrado o 500 Error de servidor),
+      // lanzamos una excepción para que nuestra app no colapse silenciosamente.
+      throw Exception("Error al cargar los videojuegos");
+    }
+  }
+}
